@@ -218,7 +218,7 @@ define([
         if (search_context.lc_cell_meme__previous) {
             queries.push({
                 name: 'Search by previous MEME',
-                query: `cell_type:${search_context.cell_type} AND lc_cell_meme__previous:${search_context.lc_cell_meme__previous}`,
+                query: `lc_cell_meme__previous:${search_context.lc_cell_meme__previous}`,
             });
         }
         if (search_context.source) {

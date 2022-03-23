@@ -270,7 +270,11 @@ define([
                 .text(`${data.error.msg} (code=${data.error.code})`));
             tbody.append(tr);
         }
-        $('.nbsearch-page-number').text(`${data.start}-${data.start + data.limit}`);
+        let pageNums = '';
+        if (data.numFound) {
+            pageNums = `${data.start}-${Math.min(data.start + data.limit, data.numFound)} / ${data.numFound}`;
+        }
+        $('.nbsearch-page-number').text(pageNums);
     }
 
     function render_error(err) {
@@ -388,9 +392,7 @@ define([
         const metadata = target_cell.metadata;
         last_selected = target_cell;
         hide_result();
-        const search_context = {
-            cell_type: target_cell.cell_type,
-        };
+        const search_context = {};
         if (metadata && metadata.lc_cell_meme && metadata.lc_cell_meme.current) {
             search_context.lc_cell_meme__previous = metadata.lc_cell_meme.current;
         }
@@ -422,6 +424,7 @@ define([
         setTimeout(function() {
             run_search({
                 query: get_default_query(search_context),
+                q_op: 'OR',
             })
                 .then(newq => {
                     $('.nbsearch-column-header').prop('disabled', false);

@@ -30,6 +30,7 @@ define([
         let q = query ? Object.assign({}, query) : {};
         q[tab_id] = 'yes';
         delete q['notebooks'];
+        delete q['numFound'];
         delete q['error'];
         window.history.pushState(null, null, `?${$.param(q)}`);
 
@@ -37,6 +38,7 @@ define([
 
         q = newq ? Object.assign({}, newq) : {};
         delete q['notebooks'];
+        delete q['numFound'];
         delete q['error'];
 
         q[tab_id] = 'yes';
@@ -175,7 +177,11 @@ define([
                 .text(`${data.error.msg} (code=${data.error.code})`));
             tbody.append(tr);
         }
-        $('.nbsearch-page-number').text(`${data.start}-${data.start + data.limit}`);
+        let pageNums = '';
+        if (data.numFound) {
+            pageNums = `${data.start}-${Math.min(data.start + data.limit, data.numFound)} / ${data.numFound}`;
+        }
+        $('.nbsearch-page-number').text(pageNums);
     }
 
     function render_error(err) {
