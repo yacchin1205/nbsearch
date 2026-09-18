@@ -37,11 +37,11 @@ ENV SOLR_USER="jovyan" \
     LOG4J_PROPS=/var/solr/log4j2.xml
 RUN chown jovyan:users -R /var/solr /run/tinyproxy
 
-# SeaweedFS
-ENV SEAWEEDFS_ACCESS_KEY=nbsearchak SEAWEEDFS_SECRET_KEY=nbsearchsk
-RUN mkdir -p /opt/seaweedfs/bin/ && \
-    curl -fsSL https://github.com/seaweedfs/seaweedfs/releases/download/4.47/linux_amd64.tar.gz | tar xz -C /opt/seaweedfs/bin/ && \
-    mkdir -p /var/seaweedfs && chown jovyan:users -R /var/seaweedfs
+# Garage
+ENV GARAGE_DEFAULT_ACCESS_KEY=nbsearchak GARAGE_DEFAULT_SECRET_KEY=nbsearchsecretkey
+RUN mkdir -p /opt/garage/bin/ && \
+    curl -fsSL https://garagehq.deuxfleurs.fr/_releases/v2.4.1/x86_64-unknown-linux-musl/garage > /opt/garage/bin/garage && \
+    chmod +x /opt/garage/bin/garage && mkdir -p /var/garage && chown jovyan:users -R /var/garage
 
 COPY . /tmp/nbsearch
 RUN pip install -e /tmp/nbsearch && \
@@ -93,9 +93,10 @@ RUN mkdir -p /home/$NB_USER/.nbsearch && \
     cp /tmp/nbsearch/example/config_*.py /home/$NB_USER/.nbsearch/ && \
     mkdir /home/$NB_USER/.nbsearch/conf.d && \
     cp /tmp/nbsearch/example/supervisor.conf /home/$NB_USER/.nbsearch/supervisor.conf && \
+    cp /tmp/nbsearch/example/garage.toml /home/$NB_USER/.nbsearch/garage.toml && \
     cp /tmp/nbsearch/example/update-index.lua /home/$NB_USER/.nbsearch/update-index.lua && \
     cp -fr /tmp/nbsearch/example/notebooks/* /home/$NB_USER/ && \
     cp /tmp/nbsearch/images/* /home/$NB_USER/images/ && \
     cp /tmp/nbsearch/README.md /home/$NB_USER/
 
-VOLUME /var/solr /var/seaweedfs
+VOLUME /var/solr /var/garage

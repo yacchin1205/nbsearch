@@ -10,23 +10,25 @@ services:
     volumes:
       - solr_data:/var/solr
 
-  seaweedfs:
-    image: chrislusf/seaweedfs:4.47
-    container_name: nbsearch-seaweedfs
+  garage:
+    image: dxflrs/garage:v2.4.1
+    container_name: nbsearch-garage
     ports:
       - "9000:9000"
+      - "3903:3903"
     volumes:
-      - seaweedfs_data:/data
+      - garage_data:/var/garage
+      - ./example/garage.toml:/etc/garage.toml:ro
     environment:
-      - AWS_ACCESS_KEY_ID=nbsearchak
-      - AWS_SECRET_ACCESS_KEY=nbsearchsk
-    command: mini -s3.port=9000 -master.telemetry=false
+      - GARAGE_DEFAULT_ACCESS_KEY=nbsearchak
+      - GARAGE_DEFAULT_SECRET_KEY=nbsearchsecretkey
+    command: server --single-node --default-access-key
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/healthz"]
+      test: ["CMD", "/garage", "status"]
       interval: 10s
       timeout: 5s
       retries: 5
 
 volumes:
   solr_data:
-  seaweedfs_data:
+  garage_data:
