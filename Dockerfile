@@ -44,8 +44,12 @@ RUN mkdir -p /opt/garage/bin/ && \
     chmod +x /opt/garage/bin/garage && mkdir -p /var/garage && chown jovyan:users -R /var/garage
 
 COPY . /tmp/nbsearch
-RUN pip install -e /tmp/nbsearch && \
-    pip install --no-cache \
+# nblineage, notebook_diff and lc_index use hatch-jupyter-builder 0.9.1, which is
+# incompatible with the two-parameter BuildHookInterface introduced in Hatchling 1.32.1.
+# See https://github.com/pypa/hatch/issues/2437
+RUN printf '%s\n' 'hatchling<1.32.1' > /tmp/pip-build-constraints.txt && \
+    pip install -e /tmp/nbsearch && \
+    PIP_BUILD_CONSTRAINT=/tmp/pip-build-constraints.txt pip install --no-cache \
         git+https://github.com/NII-cloud-operation/Jupyter-LC_nblineage.git@main \
         git+https://github.com/NII-cloud-operation/Jupyter-LC_notebook_diff.git@main \
         git+https://github.com/NII-cloud-operation/Jupyter-LC_index.git@main \
