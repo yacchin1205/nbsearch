@@ -1,5 +1,8 @@
 [build-system]
-requires = ["hatchling>=1.5.0", "jupyterlab>=4.0.0,<5", "hatch-nodejs-version>=0.3.2"]
+# hatch-jupyter-builder 0.9.1 is incompatible with the two-parameter
+# BuildHookInterface introduced in Hatchling 1.32.1.
+# See https://github.com/pypa/hatch/issues/2437
+requires = ["hatchling>=1.5.0,<1.32.1", "jupyterlab>=4.0.0,<5", "hatch-nodejs-version>=0.3.2"]
 build-backend = "hatchling.build"
 
 [project]
